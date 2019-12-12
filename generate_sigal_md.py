@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2019-12-12 17:46:58 vk>"
+PROG_VERSION = "Time-stamp: <2019-12-12 23:29:34 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -42,17 +42,15 @@ EPILOG = u"\n\
 :bugreports: via github or <tools@Karl-Voit.at>\n\
 :version: " + PROG_VERSION_DATE + "\n·\n"
 
+
 FILENAME_TAG_SEPARATOR = ' -- '
 BETWEEN_TAG_SEPARATOR = ' '
-
-TIMESTAMP_PATTERN = '(?P<datestamp(\d{4,4})-([01]\d)-([0123]\d))[- _T][012]\d\.[012345]\d\.[012345]\d'
-FILEDESCRIPTION_PATTERN = '.+?'
+TIMESTAMP_PATTERN = '(?P<datestamp>(\d{4,4})-([01]\d)-([0123]\d))([- _T][012]\d\.[012345]\d(?P<seconds>\.[012345]\d)?)?'
 FILETAGS_PATTERN = FILENAME_TAG_SEPARATOR.rstrip() + '([ ](?P<filetags>.+))+'
-EXTENSION_PATTERN = '\.(?P<extension>\w+)'
-FILENAME_PATTERN_REGEX = re.compile('^(?P<timestamp>' + TIMESTAMP_PATTERN + ')[ -_]?' +
-                                    '(?P<description>' + FILEDESCRIPTION_PATTERN + ')?' +
+FILENAME_PATTERN_REGEX = re.compile('^(?P<timestamp>' + TIMESTAMP_PATTERN + ')' +
+                                    '([-_ ](?P<description>.+?))??' +
                                     '(' + FILETAGS_PATTERN + ')?' +
-                                    EXTENSION_PATTERN + '$')
+                                    '\.(?P<extension>\w+)$')
 
 parser = argparse.ArgumentParser(prog=sys.argv[0],
                                  # keep line breaks in EPILOG and such
@@ -99,7 +97,20 @@ def error_exit(errorcode, text):
 
     sys.exit(errorcode)
 
+
+def successful_exit():
+    logging.debug("successfully finished.")
+    sys.stdout.flush()
+    sys.exit(0)
+
+
 def extract_filename_components(filename):
+    """
+    Extracts file name components as strings from a complete file name.
+
+    @param filename: string containing the file name
+    @param return: time- or datestamp, description, filetags, extension (or 4x None if no date-stamp was found)
+    """
 
     components = re.match(FILENAME_PATTERN_REGEX, filename)
     if components:
@@ -108,37 +119,59 @@ def extract_filename_components(filename):
             components.group('filetags'), \
             components.group('extension')
     else:
-        return False, False, False, False
+        return None, None, None, None
 
 
-def handle_file(filename):
+def get_md(filename):
     """
-    @param filename: string containing one file name
-    @param return: FIXXME
+    Derive meta-data (date- or time-stamp, title) from a file name.
+
+    @param filename: string containing the file name
+    @param return: string with the formatted meta-data
     """
-
-    logging.debug("handle_file(\"" + filename + "\") …  " + '★' * 20)
-
-    if os.path.isdir(DIR):
-        error_exit(1, "Skipping directory \"%s\" because this tool only renames file names." % DIR)
-
-def successful_exit():
-    logging.debug("successfully finished.")
-    sys.stdout.flush()
-    sys.exit(0)
-
-def get_md(directory, filename):
-    #logging.debug('processing file:  [' + current_file + ']')
+    # logging.debug('processing file:  [' + current_file + ']')
     time_stamp, file_description, filetags, extension = extract_filename_components(filename)
-    if time_stamp and file_description:
+
+    if time_stamp:
         logging.debug('file  [' + filename + '] has meta-data. Generating md file ...')
-        md = "Title: " + file_description + "\n\n"
+        if file_description:
+            md = "Title: " + file_description + "\n\n"
+        else:
+            md = "Title: -\n\n"
         # part of sigal output anyway: outputhandle.write("From: " + time_stamp + "\n\n")
         if filetags:
             md += "Tags: " + filetags + "\n"
+        else:
+            md += "Tags: -\n"
         return md
     else:
         return None
+
+
+def handle_file(directory, filename):
+    """
+    Handles one file: retrieving the meta-data string and writing to the meta-data file if meta-data were retrieved.
+
+    @param directory: string containing the directory of the file
+    @param filename: string containing the file name
+    @param return: None
+    """
+
+    logging.debug("handle_file(\"" + filename + "\") …  " + '★' * 20)
+    abs_filename = os.path.join(directory, filename)
+
+    if os.path.isdir(abs_filename):
+        logging.warning("Skipping directory \"%s\" because this tool only renames file names." % directory)
+        return
+
+    metadata = get_md(filename)
+    if metadata:
+        md_filename = os.path.join(directory, os.path.splitext(filename)[0] + '.md')
+        with open(md_filename, 'w') as outputhandle:
+            outputhandle.write(metadata)
+    else:
+        logging.debug('file  [' + filename + '] has no meta-data. Skipping.')
+
 
 def main():
     """Main function"""
@@ -165,16 +198,10 @@ def main():
         all_files.extend(filenames)
         break
     logging.debug('found a total of %i files in directory' % len(all_files))
+    # logging.debug('files: ' + str(all_files))
 
-    matching_files = []
     for current_file in all_files:
-        metadata = get_md(directory, filename)
-        if metadata:
-            md_filename = os.path.join(directory, os.path.splitext(filename)[0] + '.md')
-            with open(md_filename, 'w') as outputhandle:
-                outputhandle.write(metadata)
-        else:
-            logging.debug('file  [' + current_file + '] has no meta-data. Skipping.')
+        handle_file(directory, current_file)
 
     successful_exit()
 
