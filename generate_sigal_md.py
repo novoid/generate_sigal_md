@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2019-12-12 23:29:34 vk>"
+PROG_VERSION = "Time-stamp: <2019-12-15 16:03:45 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -12,6 +12,7 @@ PROG_VERSION = "Time-stamp: <2019-12-12 23:29:34 vk>"
 # ===================================================================== ##
 
 from importlib import import_module
+from filetagslib import filenameconvention
 
 def save_import(library):
     try:
@@ -42,15 +43,6 @@ EPILOG = u"\n\
 :bugreports: via github or <tools@Karl-Voit.at>\n\
 :version: " + PROG_VERSION_DATE + "\n·\n"
 
-
-FILENAME_TAG_SEPARATOR = ' -- '
-BETWEEN_TAG_SEPARATOR = ' '
-TIMESTAMP_PATTERN = '(?P<datestamp>(\d{4,4})-([01]\d)-([0123]\d))([- _T][012]\d\.[012345]\d(?P<seconds>\.[012345]\d)?)?'
-FILETAGS_PATTERN = FILENAME_TAG_SEPARATOR.rstrip() + '([ ](?P<filetags>.+))+'
-FILENAME_PATTERN_REGEX = re.compile('^(?P<timestamp>' + TIMESTAMP_PATTERN + ')' +
-                                    '([-_ ](?P<description>.+?))??' +
-                                    '(' + FILETAGS_PATTERN + ')?' +
-                                    '\.(?P<extension>\w+)$')
 
 parser = argparse.ArgumentParser(prog=sys.argv[0],
                                  # keep line breaks in EPILOG and such
@@ -104,24 +96,6 @@ def successful_exit():
     sys.exit(0)
 
 
-def extract_filename_components(filename):
-    """
-    Extracts file name components as strings from a complete file name.
-
-    @param filename: string containing the file name
-    @param return: time- or datestamp, description, filetags, extension (or 4x None if no date-stamp was found)
-    """
-
-    components = re.match(FILENAME_PATTERN_REGEX, filename)
-    if components:
-        return components.group('timestamp'), \
-            components.group('description'), \
-            components.group('filetags'), \
-            components.group('extension')
-    else:
-        return None, None, None, None
-
-
 def get_md(filename):
     """
     Derive meta-data (date- or time-stamp, title) from a file name.
@@ -130,12 +104,16 @@ def get_md(filename):
     @param return: string with the formatted meta-data
     """
     # logging.debug('processing file:  [' + current_file + ']')
-    time_stamp, file_description, filetags, extension = extract_filename_components(filename)
+    components = re.match(filenameconvention.FILENAME_PATTERN_REGEX, filename)
+    datetimestamp = components.group('datetimestamp')
+    description = components.group('description')
+    filetags = components.group('filetags')
+    extension = components.group('extension')
 
-    if time_stamp:
+    if datetimestamp:
         logging.debug('file  [' + filename + '] has meta-data. Generating md file ...')
-        if file_description:
-            md = "Title: " + file_description + "\n\n"
+        if description:
+            md = "Title: " + description + "\n\n"
         else:
             md = "Title: -\n\n"
         # part of sigal output anyway: outputhandle.write("From: " + time_stamp + "\n\n")
