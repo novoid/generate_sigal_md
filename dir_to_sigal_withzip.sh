@@ -28,6 +28,9 @@ echo "\n$FILENAME: generating meta-data files…\n"
 echo "\n$FILENAME: generating gallery…\n"
 sigal build -c "${SCRIPTDIR}/sigal.conf_ZIP.py" -n 3 "${DIR}" "${DESTDIR}/${SANITIZED_DIR}"
 
+echo "$FILENAME: deleting temporary directory…    (${TMPDIR}/${DIR})\n"
+rm -r "${TMPDIR}"/"${DIR}"
+
 echo "\n$FILENAME: ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––\n"
 echo "$FILENAME:    test with:\n"
 echo "  sigal serve -c \"${SCRIPTDIR}/sigal.conf_ZIP.py\" \"${DESTDIR}/${SANITIZED_DIR}\"\n"
