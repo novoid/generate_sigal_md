@@ -23,7 +23,11 @@ provides only minimal documentation here.
 
 This tool needs [[http://www.python.org/downloads/][Python 3 to be installed]].
 
-Follow GitHub instructions.
+1. Follow GitHub instructions to get the source code.
+2. Understand the principle
+3. Modify paths of shell scripts
+4. Test with test data: =dir_to_sigal_withoutzip.sh <DIRECTORY>= or =dir_to_sigal_withzip.sh <DIRECTORY>=
+5. Inspect result via =signal serve ...= or upload to web server
 
 ** Changelog
 
