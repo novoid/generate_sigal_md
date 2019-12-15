@@ -26,8 +26,11 @@ This tool needs [[http://www.python.org/downloads/][Python 3 to be installed]].
 1. Follow GitHub instructions to get the source code.
 2. Understand the principle
 3. Modify paths of shell scripts
-4. Test with test data: =dir_to_sigal_withoutzip.sh <DIRECTORY>= or =dir_to_sigal_withzip.sh <DIRECTORY>=
-5. Inspect result via =signal serve ...= or upload to web server
+4. Adapt =sigal.conf*.py= files
+5. Test with test data: =dir_to_sigal_withoutzip.sh <DIRECTORY>= or =dir_to_sigal_withzip.sh <DIRECTORY>=
+   - Both are equivalent. The only difference is that a downloadable
+     ZIP archive is added to the gallery.
+6. Inspect result via =signal serve ...= or upload to web server
 
 ** Changelog
 
