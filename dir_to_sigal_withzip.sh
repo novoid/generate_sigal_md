@@ -17,6 +17,20 @@ DESTDIR="${HOME}/public_html/albums"
 #echo "$FILENAME:  DEBUG:  SCRIPTDIR: $SCRIPTDIR"
 #echo "$FILENAME:  DEBUG:  DESTDIR: $DESTDIR"
 
+errorexit()
+{
+    [ "$1" -lt 1 ] && echo "$FILENAME done."
+    if [ "$1" -gt 0 ]; then
+        echo
+        echo "$FILENAME aborted with errorcode $1:  $2"
+        echo
+    fi
+
+    exit $1
+}
+
+[ -d "${DIR}" ] || errorexit 1 "\"${DIR}\" is not a directory. Please provide a directory containing images for processing with sigal."
+
 echo "$FILENAME: copying directory $DIR to temporary directory…    (${TMPDIR})\n"
 cp -r "${DIR}" "${TMPDIR}"/
 
