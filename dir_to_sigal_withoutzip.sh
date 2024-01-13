@@ -9,7 +9,7 @@ DIR="${1}"
 SANITIZED_DIR=$(echo $DIR|sed 's/ /_/g')
 TMPDIR="${HOME}/tmp/Tools/sigal_gallery_from_filetags_files"
 SCRIPTDIR="${HOME}/src/sigal_gallery_from_filetags_files"
-DESTDIR="${HOME}/public_html/albums"
+DESTDIR="${HOME}/share/karl-voit.at/albums"
 
 #echo "$FILENAME:  DEBUG:  DIR: $DIR"
 #echo "$FILENAME:  DEBUG:  SANITIZED_DIR: $SANITIZED_DIR"
@@ -36,7 +36,7 @@ cp -r "${DIR}" "${TMPDIR}"/
 
 cd "${TMPDIR}"/
 
-echo "$FILENAME: generating meta-data files…\n"
+echo "\n$FILENAME: generating meta-data files…\n"
 "${SCRIPTDIR}/generate_sigal_md.py" "${TMPDIR}"/"${DIR}"
 
 echo "\n$FILENAME: generating gallery…\n"

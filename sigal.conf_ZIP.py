@@ -199,7 +199,7 @@ links = [('Karls Webseite', 'https://Karl-Voit.at')#,
 # Set zip_gallery to either False or a file name. The file name can be formatted
 # python style with an 'album' variable, for example '{album.name}.zip'. The final archive will
 # contain all resized or original files (depending on `zip_media_format`).
-zip_gallery = 'archive.zip'   # False or 'archive.zip'
+zip_gallery = 'all.zip'   # False or 'archive.zip'
 zip_media_format = 'orig'  # 'resized' or 'orig'
 zip_skip_if_exists = False # Skip archive generation if archive is already present. Warning: new photos in an album won't be added to archive
 

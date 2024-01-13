@@ -9,7 +9,7 @@ DIR="${1}"
 SANITIZED_DIR=$(echo $DIR|sed 's/ /_/g')
 TMPDIR="${HOME}/tmp/Tools/sigal_gallery_from_filetags_files"
 SCRIPTDIR="${HOME}/src/sigal_gallery_from_filetags_files"
-DESTDIR="${HOME}/public_html/albums"
+DESTDIR="${HOME}/share/karl-voit.at/albums"
 
 #echo "$FILENAME:  DEBUG:  DIR: $DIR"
 #echo "$FILENAME:  DEBUG:  SANITIZED_DIR: $SANITIZED_DIR"
@@ -31,7 +31,7 @@ errorexit()
 
 [ -d "${DIR}" ] || errorexit 1 "\"${DIR}\" is not a directory. Please provide a directory containing images for processing with sigal."
 
-echo "$FILENAME: copying directory $DIR to temporary directory…    (${TMPDIR})\n"
+echo "\n$FILENAME: copying directory $DIR to temporary directory…    (${TMPDIR})\n"
 cp -r "${DIR}" "${TMPDIR}"/
 
 cd "${TMPDIR}"/
