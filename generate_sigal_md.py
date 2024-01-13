@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-PROG_VERSION = "Time-stamp: <2019-12-15 16:03:45 vk>"
+PROG_VERSION = "Time-stamp: <2024-01-13 18:26:08 vk>"
 
 # TODO:
 # - fix parts marked with «FIXXME»
@@ -14,7 +14,7 @@ PROG_VERSION = "Time-stamp: <2019-12-15 16:03:45 vk>"
 from importlib import import_module
 from filetagslib import filenameconvention
 
-def save_import(library):
+def safe_import(library):
     try:
         globals()[library] = import_module(library)
     except ImportError:
